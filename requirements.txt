@@ -1,0 +1,13 @@
+# core
+pygame >=2.0
+typing >=3.7
+numpy
+robingame ==1.0.1
+
+
+# testing and development
+black
+pytest
+coverage
+pytest-cov
+commitizen
