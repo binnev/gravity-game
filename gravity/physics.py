@@ -1,8 +1,16 @@
 import math
+from dataclasses import dataclass
 
 from . import constants
-from .body import Body
 from .vector import Vector2D
+
+
+@dataclass
+class Body:
+    mass: float  # kg
+    radius: float  # m
+    u: float = 0  # m/s
+    v: float = 0  # m/s
 
 
 def euclidian_distance(xy1, xy2) -> float:

@@ -4,7 +4,7 @@ from robingame.utils import random_float
 
 from .automaton import GravityAutomaton
 from .backend import Backend
-from .body import Body
+from .physics import Body
 from .frontend import GravityFrontend, GravityMinimap
 from .input_handler import KeyboardHandler
 from .viewer import Viewer

@@ -2,13 +2,12 @@ import numpy
 from robingame.utils import SparseMatrix
 
 from . import physics
-from .body import Body
 
 CoordFloat2D = tuple[float, float]
 
 
 class GravityAutomaton:
-    contents: SparseMatrix[CoordFloat2D:Body]
+    contents: SparseMatrix[CoordFloat2D:physics.Body]
 
     def __init__(self):
         self.contents = SparseMatrix()
@@ -58,7 +57,7 @@ class GravityAutomaton:
                     new_u = (m1 * body1.u + m2 * body2.u) / (m1 + m2)
                     new_v = (m1 * body1.v + m2 * body2.v) / (m1 + m2)
                     new_radius = numpy.sqrt(body1.radius**2 + body2.radius**2)
-                    new_body = Body(
+                    new_body = physics.Body(
                         mass=body1.mass + body2.mass,
                         radius=new_radius,
                         u=new_u,
@@ -70,5 +69,5 @@ class GravityAutomaton:
                     return True
         return False
 
-    def add_body(self, x: float, y: float, body: Body):
+    def add_body(self, x: float, y: float, body: physics.Body):
         self.contents[(x, y)] = body
