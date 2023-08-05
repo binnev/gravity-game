@@ -3,21 +3,21 @@ from collections import deque
 from robingame.objects import Entity
 from robingame.utils import SparseMatrix
 
-from .automaton import GravityAutomaton
+from .automaton import Automaton
 from .timer import Timer
 
 
 class Backend(Entity):
     """
-    Adapts GravityAutomaton for use in the pygame game loop
+    Adapts Automaton for use in the pygame game loop
 
     Inherits Entity
-    Contains GravityAutomaton
+    Contains Automaton
     Implements update/iterate disconnect
     Implements history
     """
 
-    automaton: GravityAutomaton
+    automaton: Automaton
 
     ticks_per_update: int = 1
     iterations_per_update: int = 1
@@ -25,7 +25,7 @@ class Backend(Entity):
     history: deque[SparseMatrix]
     _update_time = 0
 
-    def __init__(self, automaton: GravityAutomaton):
+    def __init__(self, automaton: Automaton):
         super().__init__()
         self.automaton = automaton
         self.history = deque(maxlen=50)

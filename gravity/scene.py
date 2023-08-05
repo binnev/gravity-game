@@ -2,7 +2,7 @@ from pygame import Rect
 from robingame.objects import Entity, Group
 from robingame.utils import random_float
 
-from .automaton import GravityAutomaton
+from .automaton import GravityAutomatonSparseMatrix, GravityAutomatonDataFrame
 from .backend import Backend
 from .physics import Body
 from .frontend import GravityFrontend, GravityMinimap
@@ -15,7 +15,8 @@ class GravityScene(Entity):
     def __init__(self):
         super().__init__()
 
-        automaton = GravityAutomaton()
+        # automaton = GravityAutomatonSparseMatrix()
+        automaton = GravityAutomatonDataFrame()
         for _ in range(200):
             x = random_float(-500, 500)
             y = random_float(-500, 500)
@@ -23,7 +24,7 @@ class GravityScene(Entity):
             v = random_float(-2, 2)
             radius = random_float(1, 10)
             mass = radius * 9999999999
-            automaton.add_body(x, y, body=Body(radius=radius, mass=mass, u=u, v=v))
+            automaton.add_body(x, y, radius=radius, mass=mass, u=u, v=v)
 
         backend = Backend(automaton=automaton)
         main_rect = Rect(0, 0, 1000, 1000)

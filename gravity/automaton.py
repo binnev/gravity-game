@@ -1,4 +1,7 @@
+from typing import Protocol
+
 import numpy
+from pandas import DataFrame
 from robingame.utils import SparseMatrix
 
 from . import physics
@@ -6,8 +9,25 @@ from . import physics
 CoordFloat2D = tuple[float, float]
 
 
-class GravityAutomaton:
-    contents: SparseMatrix[CoordFloat2D:physics.Body]
+class Automaton(Protocol):
+    def iterate(self):
+        ...
+
+    def add_body(self, x: float, y: float, mass: float, radius: float, u: float = 0, v: float = 0):
+        ...
+
+    def bodies(self) -> dict[CoordFloat2D, physics.Body]:
+        ...
+
+    def world_size(self) -> tuple[float, float]:
+        ...
+
+    def world_limits(self) -> tuple[tuple[float, float], tuple[float, float]]:
+        ...
+
+
+class GravityAutomatonSparseMatrix:
+    contents: SparseMatrix[CoordFloat2D, physics.Body]
 
     def __init__(self):
         self.contents = SparseMatrix()
@@ -69,5 +89,74 @@ class GravityAutomaton:
                     return True
         return False
 
-    def add_body(self, x: float, y: float, body: physics.Body):
-        self.contents[(x, y)] = body
+    def add_body(self, x: float, y: float, mass: float, radius: float, u: float = 0, v: float = 0):
+        self.contents[(x, y)] = physics.Body(mass=mass, radius=radius, u=u, v=v)
+
+    def bodies(self) -> dict[CoordFloat2D, physics.Body]:
+        return self.contents
+
+    def world_size(self) -> tuple[float, float]:
+        return self.contents.size
+
+    def world_limits(self) -> tuple[tuple[float, float], tuple[float, float]]:
+        return self.contents.limits
+
+
+class GravityAutomatonDataFrame:
+    contents: DataFrame
+
+    def __init__(self):
+        self.contents = DataFrame(columns="x y mass radius u v".split())
+
+    def iterate(self):
+        """
+        1. Apply the rules of gravitation attraction between each pair of objects
+        2. Move every object according to the laws of motion
+        """
+        # 1
+        ...
+
+    def do_collisions(self) -> bool:
+        """
+        fixme: refactor
+        Do one round of collision processing.
+        Return True if collisions were processed.
+        """
+        ...
+
+    def add_body(self, x: float, y: float, mass: float, radius: float, u: float = 0, v: float = 0):
+        """
+        Add a body to the automaton. This makes a full copy of the contents dataframe,
+        so it's quite slow. Use sparingly.
+        """
+        self.contents = DataFrame(
+            [
+                *self.contents.to_dict(orient="records"),
+                dict(x=x, y=y, mass=mass, radius=radius, u=u, v=v),
+            ]
+        )
+
+    def bodies(self) -> dict[CoordFloat2D, physics.Body]:
+        return {
+            (body.x, body.y): physics.Body(
+                mass=body.mass,
+                radius=body.radius,
+                u=body.u,
+                v=body.v,
+            )
+            for ii, body in self.contents.iterrows()
+        }
+
+    def world_size(self) -> tuple[float, float]:
+        xlim, ylim = self.world_limits()
+        width = xlim[1] - xlim[0] + 1
+        height = ylim[1] - ylim[0] + 1
+        return width, height
+
+    def world_limits(self) -> tuple[tuple[float, float], tuple[float, float]]:
+        if self.contents.empty:
+            return (0, 0), (0, 0)
+        else:
+            xlim = self.contents.x.min(), self.contents.x.max()
+            ylim = self.contents.y.min(), self.contents.y.max()
+            return xlim, ylim
