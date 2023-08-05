@@ -3,6 +3,7 @@ pygame >=2.0
 typing >=3.7
 numpy
 robingame ==1.0.1
+pandas
 
 
 # testing and development
