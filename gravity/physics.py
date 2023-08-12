@@ -1,7 +1,9 @@
+import numpy
 import math
 from dataclasses import dataclass
 
 from . import constants
+from .constants import GRAVITATIONAL_CONSTANT
 from .vector import Vector2D
 
 
@@ -77,3 +79,81 @@ def gravitational_attraction(body1: Body, xy1, body2: Body, xy2):
     body1.v += acc1_y
     body2.u += acc2_x
     body2.v += acc2_y
+
+
+# ================== matrix algebra solution =========================
+def calculate_distances(
+    x: numpy.array, y: numpy.array
+) -> tuple[numpy.array, numpy.array, numpy.ndarray]:
+    X = x.reshape(-1, 1)
+    Y = y.reshape(-1, 1)
+    ones = numpy.ones_like(X).T
+    X1 = X.dot(ones)
+    X2 = X1.T
+    Y1 = Y.dot(ones)
+    Y2 = Y1.T
+    DX = X2 - X1
+    DY = Y2 - Y1
+    DIST = numpy.sqrt(DX**2 + DY**2)
+    return DX, DY, DIST
+
+
+def calculate_attraction_forces(mass: numpy.array, DIST: numpy.ndarray) -> numpy.ndarray:
+    """
+    Calculate attraction force by F = G * (m1 * m2) / R**2
+
+    :param mass: 1d array of masses
+    :param DIST: 2d array of distances where DIST[i, j] is the distance from body i to body j
+    :return: 2d array of attraction forces where FORCE[i, j] is the force on body i due to body j
+    """
+    MASS = mass.reshape(1, -1)
+    M1M2 = MASS.T.dot(MASS)
+    DIST[DIST == 0] = 1  # avoid division by zero
+    ZERO_DIAGONAL = numpy.ones_like(M1M2) - numpy.eye(len(M1M2))
+    M1M2 = M1M2 * ZERO_DIAGONAL
+    FORCE = GRAVITATIONAL_CONSTANT * M1M2 / DIST**2
+    return FORCE
+
+
+def calculate_accelerations(FORCE: numpy.ndarray, mass: numpy.array) -> numpy.ndarray:
+    """
+    Calculate acceleration by a = F / m
+
+    :param FORCE: 2d array of attraction forces where FORCE[i, j] is the force on
+        body i due to body j
+    :param mass: 1d array of masses
+    :return: 2d array of accelerations where ACCELERATION[i, j] is the acceleration
+        of body i due to body j
+    """
+
+    MASS = mass.reshape(-1, 1)
+    ONES = numpy.ones_like(MASS.T)
+    MASS_ARRAY = MASS.dot(ONES)
+    ACCELERATION = FORCE / MASS_ARRAY
+    return ACCELERATION
+
+
+def calculate_x_y_acceleration(
+    x: numpy.array,
+    y: numpy.array,
+    mass: numpy.array,
+) -> tuple[numpy.array, numpy.array]:
+    """
+    Given the x/y coordinates and masses of a set of bodies, calculate the x/y acceleration of
+    the bodies due to gravitational attraction.
+    :param x: 1d array of x coordinates
+    :param y: 1d array of y coordinates
+    :param mass: 1d array of masses
+    :return acc_x: 1d array of x accelerations
+    :return acc_y: 1d array of y accelerations
+    """
+    DX, DY, DIST = calculate_distances(x, y)
+    FORCE = calculate_attraction_forces(mass, DIST)
+    ACCELERATION = calculate_accelerations(FORCE, mass)
+    UNIT_X = DX / DIST
+    UNIT_Y = DY / DIST
+    ACC_X = ACCELERATION * UNIT_X
+    ACC_Y = ACCELERATION * UNIT_Y
+    acc_x = ACC_X.sum(axis=1)
+    acc_y = ACC_Y.sum(axis=1)
+    return acc_x, acc_y

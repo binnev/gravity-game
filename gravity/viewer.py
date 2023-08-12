@@ -81,8 +81,8 @@ class Viewer(Entity):
                     f"update time: {self.backend._update_time:0.5f}",
                     f"ticks_per_update: {self.backend.ticks_per_update}",
                     f"iterations_per_update: {self.backend.iterations_per_update}",
-                    f"world size: {self.backend.automaton.contents.size}",
-                    f"world limits: {self.backend.automaton.contents.limits}",
+                    f"world size: {self.backend.automaton.world_size()}",
+                    f"world limits: {self.backend.automaton.world_limits()}",
                     f"matrix len: {len(self.backend.automaton.contents)}",
                 ]
             )

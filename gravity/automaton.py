@@ -5,6 +5,8 @@ from pandas import DataFrame
 from robingame.utils import SparseMatrix
 
 from . import physics
+from .constants import GRAVITATIONAL_CONSTANT
+from .physics import calculate_x_y_acceleration
 
 CoordFloat2D = tuple[float, float]
 
@@ -113,8 +115,18 @@ class GravityAutomatonDataFrame:
         1. Apply the rules of gravitation attraction between each pair of objects
         2. Move every object according to the laws of motion
         """
-        # 1
-        ...
+
+        x = self.contents.x.values
+        y = self.contents.y.values
+        mass = self.contents.mass.values
+        acc_x, acc_y = calculate_x_y_acceleration(x, y, mass)
+
+        # update velocities
+        self.contents.u += acc_x
+        self.contents.v += acc_y
+        # update positions
+        self.contents.x += self.contents.u
+        self.contents.y += self.contents.v
 
     def do_collisions(self) -> bool:
         """

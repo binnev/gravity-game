@@ -17,7 +17,7 @@ class GravityScene(Entity):
 
         # automaton = GravityAutomatonSparseMatrix()
         automaton = GravityAutomatonDataFrame()
-        for _ in range(200):
+        for _ in range(500):
             x = random_float(-500, 500)
             y = random_float(-500, 500)
             u = random_float(-2, 2)
