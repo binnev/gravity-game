@@ -5,8 +5,7 @@ from pandas import DataFrame
 from robingame.utils import SparseMatrix
 
 from . import physics
-from .constants import GRAVITATIONAL_CONSTANT
-from .physics import calculate_x_y_acceleration
+from .physics import calculate_x_y_acceleration, calculate_distances
 
 CoordFloat2D = tuple[float, float]
 
@@ -128,13 +127,54 @@ class GravityAutomatonDataFrame:
         self.contents.x += self.contents.u
         self.contents.y += self.contents.v
 
+        # do collisions
+        while self.do_collisions():
+            pass
+
     def do_collisions(self) -> bool:
         """
         fixme: refactor
         Do one round of collision processing.
         Return True if collisions were processed.
         """
-        ...
+        DX, DY, DIST = calculate_distances(self.contents.x.values, self.contents.y.values)
+        radii = self.contents.radius.values
+        R1R2 = radii.reshape(-1, 1) + radii.reshape(1, -1)
+        ZERO_DIAGONAL = numpy.ones_like(R1R2) - numpy.eye(len(R1R2))
+        R1R2 = R1R2 * ZERO_DIAGONAL
+        colliding = DIST < R1R2
+        iis, jjs = colliding.nonzero()
+        for i, j in zip(iis, jjs):
+            m_i = self.contents.mass[i]
+            m_j = self.contents.mass[j]
+            x_i = self.contents.x[i]
+            x_j = self.contents.x[j]
+            y_i = self.contents.y[i]
+            y_j = self.contents.y[j]
+            u_i = self.contents.u[i]
+            u_j = self.contents.u[j]
+            v_i = self.contents.v[i]
+            v_j = self.contents.v[j]
+            r_i = self.contents.radius[i]
+            r_j = self.contents.radius[j]
+            new_x = (x_i * m_i + x_j * m_j) / (m_i + m_j)
+            new_y = (y_i * m_i + y_j * m_j) / (m_i + m_j)
+            new_u = (m_i * u_i + m_j * u_j) / (m_i + m_j)
+            new_v = (m_i * v_i + m_j * v_j) / (m_i + m_j)
+            new_radius = numpy.sqrt(r_i**2 + r_j**2)
+            self.contents.drop(i, inplace=True)
+            self.contents.drop(j, inplace=True)
+            self.add_body(
+                x=new_x,
+                y=new_y,
+                mass=m_i + m_j,
+                radius=new_radius,
+                u=new_u,
+                v=new_v,
+            )
+            return True
+
+        return False
 
     def add_body(self, x: float, y: float, mass: float, radius: float, u: float = 0, v: float = 0):
         """
