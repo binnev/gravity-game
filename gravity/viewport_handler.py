@@ -73,6 +73,6 @@ class DefaultViewportHandler:
         self.height = max(self.MIN_HEIGHT, self.height)
 
     def pan(self, x: float = 0, y: float = 0):
-        speed = 0.01 * min(self.width, self.height)
+        speed = 0.01 * max(self.width, self.height)
         self.x += x * speed
         self.y += y * speed
