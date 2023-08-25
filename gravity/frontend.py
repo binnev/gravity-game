@@ -2,11 +2,15 @@ import pygame.draw
 from pygame import Surface, Color, Rect
 
 from .automaton import Automaton
+from .physics import Body
 from .transform import Transform
 from .viewport_handler import FloatRect
+import matplotlib
 
 
 class GravityFrontend:
+    colormap = matplotlib.cm.cividis
+
     def draw(
         self,
         surface: Surface,
@@ -32,17 +36,25 @@ class GravityFrontend:
         transform = Transform(viewport, image_rect_uv)
 
         for xy, body in visible.items():
-            color = self.get_color(body)
+            color = self.get_color(body, automaton)
             uv = transform.point(xy)
             radius = body.radius * transform.scale
-            radius = max(1, radius)
+            radius = max(2, radius)
             pygame.draw.circle(surface, color, center=uv, radius=radius)
 
-    def get_color(self, body):
-        return Color("red")
+    def get_color(self, body: Body, automaton: Automaton) -> Color:
+        """
+        Linearly interpolate a body's mass onto a colour scale,
+        where MIN maps to the lower limit of the colormap,
+        and MAX maps to the upper limit.
+        """
+        MIN_BRIGHTNESS = 0.2
+        interpolated = body.mass / automaton.total_mass
+        interpolated = max(interpolated, MIN_BRIGHTNESS)
+        return Color(*tuple(int(ch * 255) for ch in self.colormap(interpolated)))
 
 
-class GravityMinimap:
+class GravityMinimap(GravityFrontend):
     def draw(
         self,
         surface: Surface,
@@ -66,7 +78,7 @@ class GravityMinimap:
 
         # Draw all cells in screen coords
         for xy, body in automaton.bodies().items():
-            color = self.get_color(body)
+            color = self.get_color(body, automaton)
             uv = transform.point(xy)
             radius = body.radius * transform.scale
             radius = max(radius, 2)
@@ -76,6 +88,3 @@ class GravityMinimap:
         if debug:
             world_rect_uv = transform.rect(world_rect_xy)
             pygame.draw.rect(surface, Color("yellow"), world_rect_uv, 1)
-
-    def get_color(self, value):
-        return Color("red")

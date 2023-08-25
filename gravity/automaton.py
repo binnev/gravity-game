@@ -11,6 +11,8 @@ CoordFloat2D = tuple[float, float]
 
 
 class Automaton(Protocol):
+    total_mass: float  # calculated every iteration
+
     def iterate(self):
         ...
 
@@ -56,6 +58,9 @@ class GravityAutomatonSparseMatrix:
         # 3 collisions
         while self.do_collisions():
             pass
+
+        # calculate total mass once per iteration
+        self.total_mass = sum(body.mass for body in self.contents.values())
 
     def do_collisions(self) -> bool:
         """
@@ -130,6 +135,9 @@ class GravityAutomatonDataFrame:
         # do collisions
         while self.do_collisions():
             pass
+
+        # calculate total mass once per iteration
+        self.total_mass = self.contents.mass.sum()
 
     def do_collisions(self) -> bool:
         """
