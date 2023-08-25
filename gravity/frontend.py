@@ -69,7 +69,7 @@ class GravityMinimap:
             color = self.get_color(body)
             uv = transform.point(xy)
             radius = body.radius * transform.scale
-            radius = max(radius, 1)
+            radius = max(radius, 2)
             pygame.draw.circle(surface, color, center=uv, radius=radius)
 
         pygame.draw.rect(surface, Color("white"), viewport_rect_uv, 1)
