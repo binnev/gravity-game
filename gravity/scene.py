@@ -20,8 +20,8 @@ class GravityScene(Entity):
         for _ in range(500):
             x = random_float(-500, 500)
             y = random_float(-500, 500)
-            u = random_float(-2, 2)
-            v = random_float(-2, 2)
+            u = random_float(-3, 3)
+            v = random_float(-3, 3)
             radius = random_float(1, 10)
             mass = radius * 9999999999
             automaton.add_body(x, y, radius=radius, mass=mass, u=u, v=v)
