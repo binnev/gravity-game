@@ -65,14 +65,14 @@ class Viewer(Entity):
     def draw(self, surface: Surface, debug: bool = False):
         with Timer() as draw_timer:
             super().draw(surface, debug)
+            pygame.draw.rect(surface, Color("white"), self.rect.inflate(2, 2), 1)
             self.frontend.draw(
                 surface=self.image,
                 automaton=self.backend.automaton,
                 viewport=self.viewport_handler.viewport,
                 debug=debug,
             )
-            pygame.draw.rect(self.image, Color("white"), self.image.get_rect(), 1)
-        surface.blit(self.image, self.rect)
+            surface.blit(self.image, self.rect)
         if debug:
             text = "\n".join(
                 [
