@@ -45,7 +45,6 @@ class DefaultViewportHandler:
 
     ZOOM_SPEED = 1.1
     MIN_WIDTH = MIN_HEIGHT = 3.0
-    MAX_WIDTH = MAX_HEIGHT = 1000.0
 
     @property
     def viewport(self) -> FloatRect:
@@ -71,9 +70,7 @@ class DefaultViewportHandler:
             self.width *= self.ZOOM_SPEED
             self.height *= self.ZOOM_SPEED
         self.width = max(self.MIN_WIDTH, self.width)
-        self.width = min(self.MAX_WIDTH, self.width)
         self.height = max(self.MIN_HEIGHT, self.height)
-        self.height = min(self.MAX_HEIGHT, self.height)
 
     def pan(self, x: float = 0, y: float = 0):
         speed = 0.01 * min(self.width, self.height)
