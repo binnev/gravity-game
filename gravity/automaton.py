@@ -16,7 +16,16 @@ class Automaton(Protocol):
     def iterate(self):
         ...
 
-    def add_body(self, x: float, y: float, mass: float, radius: float, u: float = 0, v: float = 0):
+    def add_body(
+        self,
+        x: float,
+        y: float,
+        mass: float,
+        radius: float,
+        u: float = 0,
+        v: float = 0,
+        name: str = "",
+    ):
         ...
 
     def bodies(self) -> dict[CoordFloat2D, physics.Body]:
@@ -95,8 +104,17 @@ class GravityAutomatonSparseMatrix:
                     return True
         return False
 
-    def add_body(self, x: float, y: float, mass: float, radius: float, u: float = 0, v: float = 0):
-        self.contents[(x, y)] = physics.Body(mass=mass, radius=radius, u=u, v=v)
+    def add_body(
+        self,
+        x: float,
+        y: float,
+        mass: float,
+        radius: float,
+        u: float = 0,
+        v: float = 0,
+        name: str = "",
+    ):
+        self.contents[(x, y)] = physics.Body(mass=mass, radius=radius, u=u, v=v, name=name)
 
     def bodies(self) -> dict[CoordFloat2D, physics.Body]:
         return self.contents
@@ -112,7 +130,7 @@ class GravityAutomatonDataFrame:
     contents: DataFrame
 
     def __init__(self):
-        self.contents = DataFrame(columns="x y mass radius u v".split())
+        self.contents = DataFrame(columns="x y mass radius u v name".split())
 
     def iterate(self):
         """
@@ -184,7 +202,16 @@ class GravityAutomatonDataFrame:
 
         return False
 
-    def add_body(self, x: float, y: float, mass: float, radius: float, u: float = 0, v: float = 0):
+    def add_body(
+        self,
+        x: float,
+        y: float,
+        mass: float,
+        radius: float,
+        u: float = 0,
+        v: float = 0,
+        name: str = "",
+    ):
         """
         Add a body to the automaton. This makes a full copy of the contents dataframe,
         so it's quite slow. Use sparingly.
@@ -192,7 +219,7 @@ class GravityAutomatonDataFrame:
         self.contents = DataFrame(
             [
                 *self.contents.to_dict(orient="records"),
-                dict(x=x, y=y, mass=mass, radius=radius, u=u, v=v),
+                dict(x=x, y=y, mass=mass, radius=radius, u=u, v=v, name=name),
             ]
         )
 
@@ -203,6 +230,7 @@ class GravityAutomatonDataFrame:
                 radius=body.radius,
                 u=body.u,
                 v=body.v,
+                name=body["name"],  # .name is reserved; it's the name of the series.
             )
             for ii, body in self.contents.iterrows()
         }

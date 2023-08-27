@@ -1,6 +1,7 @@
 import matplotlib
 import pygame.draw
 from pygame import Surface, Color
+from robingame.text import fonts
 
 from .automaton import Automaton
 from .physics import Body
@@ -46,6 +47,7 @@ class GravityFrontend:
             radius = body.radius * transform.scale
             radius = max(2, radius)
             pygame.draw.circle(surface, color, center=uv, radius=radius)
+            fonts.cellphone_white.render(surface, str(body.name), x=uv[0], y=uv[1], scale=2)
 
     def get_color(self, body: Body, automaton: Automaton) -> Color:
         """

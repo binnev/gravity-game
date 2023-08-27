@@ -13,6 +13,7 @@ class Body:
     radius: float  # m
     u: float = 0  # m/s
     v: float = 0  # m/s
+    name: str = ""
 
 
 def euclidian_distance(xy1, xy2) -> float:
