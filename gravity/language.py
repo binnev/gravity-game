@@ -36,6 +36,47 @@ ENDS = (
 )
 
 
+# STARTS = (
+#     "Lon",
+#     "Birm",
+#     "Man",
+#     "Scun",
+#     "West",
+#     "Clap",
+#     "Barn",
+#     "Bath",
+#     "Bris",
+#     "Brom",
+#     "Scran",
+# )
+#
+# ENDS = (
+#     "don",
+#     "ham",
+#     "chester",
+#     "pool",
+#     "mouth",
+#     "field",
+#     "ford",
+#     "ley",
+#     "ton",
+#     "wood",
+#     "thorpe",
+#     "by",
+#     "bridge",
+#     "lington",
+#     "bury",
+#     "hampton",
+#     "wich",
+#     "worth",
+#     "borough",
+#     "hampton",
+#     "minster",
+#     "stead",
+#
+# )
+
+
 def generate_syllable() -> str:
     """
     Generate an alien-sounding name for a planetary body
