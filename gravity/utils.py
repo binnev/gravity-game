@@ -17,7 +17,7 @@ def create_solar_system(automaton: Automaton):
         y=0,
         mass=1989100000e21,
         radius=695508000,
-        name="sun",
+        name="Sun",
     )  # sun
     for mass, diameter, dist, vel, name in zip(
         masses_e24, diameters_e3, sun_dist_km_e6, velocities_km_s, names
@@ -26,7 +26,7 @@ def create_solar_system(automaton: Automaton):
         diameter *= 1e3
         dist *= 1e9
         vel *= 1e3
-        automaton.add_body(x=0, y=dist, mass=mass, radius=diameter / 2, u=vel, name=name)
+        automaton.add_body(x=0, y=dist, mass=mass, radius=diameter / 2, u=vel, name=name.title())
 
 
 def spawn_random(automaton: Automaton):
