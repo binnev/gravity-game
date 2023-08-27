@@ -13,3 +13,4 @@ pytest
 coverage
 pytest-cov
 commitizen
+redbreast
