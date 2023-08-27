@@ -1,11 +1,12 @@
+import matplotlib
 import pygame.draw
-from pygame import Surface, Color, Rect
+from pygame import Surface, Color
 
 from .automaton import Automaton
 from .physics import Body
 from .transform import Transform
+from .utils import overlap
 from .viewport_handler import FloatRect
-import matplotlib
 
 
 class GravityFrontend:
@@ -23,12 +24,16 @@ class GravityFrontend:
         """
         surface.fill(Color("black"))
 
-        viewport_rect_xy = Rect(*viewport).inflate(2, 2)
         visible = {
             (x, y): body
             for (x, y), body in automaton.bodies().items()
-            if viewport_rect_xy.colliderect(
-                Rect(x - body.radius, y - body.radius, body.radius * 2, body.radius * 2)
+            if (
+                overlap(
+                    (x - body.radius, x + body.radius), (viewport[0], viewport[0] + viewport[2])
+                )
+                and overlap(
+                    (y - body.radius, y + body.radius), (viewport[1], viewport[1] + viewport[3])
+                )
             )
         }
 
@@ -71,7 +76,7 @@ class GravityMinimap(GravityFrontend):
         # fit viewport as tightly as possible to world limits
         world_width, world_height = automaton.world_size()
         (xmin, xmax), (ymin, ymax) = automaton.world_limits()
-        world_rect_xy = Rect(xmin, ymin, world_width, world_height)
+        world_rect_xy = FloatRect((xmin, ymin, world_width, world_height))
         image_rect_uv = surface.get_rect()
         transform = Transform(world_rect_xy, image_rect_uv)
         viewport_rect_uv = transform.floatrect(viewport)
