@@ -32,12 +32,28 @@ def create_solar_system(automaton: Automaton):
         automaton.add_body(x=0, y=dist, mass=mass, radius=diameter / 2, u=vel, name=name.title())
 
 
-def spawn_random(automaton: Automaton):
+def spawn_random(automaton: Automaton, n: int = 500):
     for _ in range(500):
         x = random_float(-500, 500)
         y = random_float(-500, 500)
         u = random_float(-2, 2)
         v = random_float(-2, 2)
+        radius = random_float(1, 10)
+        mass = radius * 9999999999
+        name = generate_syllable()
+        automaton.add_body(x, y, radius=radius, mass=mass, u=u, v=v, name=name)
+
+
+def spawn_swirling(automaton: Automaton, n: int = 500):
+    automaton.add_body(0, 0, radius=30, mass=100 * 9999999999, name=generate_syllable())
+    SPEED_COEFF = 0.004
+    for _ in range(n):
+        radius = random_float(0, 500)
+        angle = random_float(0, 2 * math.pi)
+        x = radius * math.cos(angle)
+        y = radius * math.sin(angle)
+        u = SPEED_COEFF * -y  # + random_float(-.1, .1)
+        v = SPEED_COEFF * x  # + random_float(-.1, .1)
         radius = random_float(1, 10)
         mass = radius * 9999999999
         name = generate_syllable()

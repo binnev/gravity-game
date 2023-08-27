@@ -19,7 +19,7 @@ class GravityScene(Entity):
         # automaton = GravityAutomatonSparseMatrix()
         automaton = GravityAutomatonDataFrame()
         # utils.create_solar_system(automaton)
-        utils.spawn_random(automaton)
+        utils.spawn_swirling(automaton, 500)
         backend = Backend(automaton=automaton)
         main_rect = Rect(0, 0, 1000, 1000)
         size = max(automaton.world_size())
