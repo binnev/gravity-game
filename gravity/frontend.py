@@ -47,7 +47,8 @@ class GravityFrontend:
             radius = body.radius * transform.scale
             radius = max(2, radius)
             pygame.draw.circle(surface, color, center=uv, radius=radius)
-            fonts.cellphone_white.render(surface, str(body.name), x=uv[0], y=uv[1], scale=2)
+            if body.name:
+                fonts.cellphone_white.render(surface, body.name, x=uv[0], y=uv[1], scale=2)
 
     def get_color(self, body: Body, automaton: Automaton) -> Color:
         """
