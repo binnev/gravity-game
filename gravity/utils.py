@@ -1,5 +1,6 @@
 import math
 
+import numpy
 from robingame.utils import random_float
 
 from gravity.automaton import Automaton
@@ -54,8 +55,27 @@ def spawn_swirling(automaton: Automaton, n: int = 500):
         y = radius * math.sin(angle)
         u = SPEED_COEFF * -y  # + random_float(-.1, .1)
         v = SPEED_COEFF * x  # + random_float(-.1, .1)
-        radius = random_float(1, 10)
-        mass = radius * 9999999999
+        radius = 1  # random_float(1, 10)
+        mass = radius  # * 9999999999
+        name = generate_syllable()
+        automaton.add_body(x, y, radius=radius, mass=mass, u=u, v=v, name=name)
+
+
+def spawn_line(automaton: Automaton, n: int = 100):
+    SUN_RADIUS = 200
+    DENSITY = 9999999999
+    automaton.add_body(0, 0, radius=SUN_RADIUS, mass=SUN_RADIUS * DENSITY, name=generate_syllable())
+    SPEED_COEFF = 6
+    distances = numpy.linspace(SUN_RADIUS + 10, SUN_RADIUS * 10, n)
+    for dist in distances:
+        angle = 0  # random_float(0, 2 * math.pi)
+        x = dist * math.cos(angle)
+        y = dist * math.sin(angle)
+        speed = SPEED_COEFF / dist**0.35
+        u = -speed * math.sin(angle)
+        v = speed * math.cos(angle)
+        radius = random_float(1, 3)
+        mass = radius  # * DENSITY
         name = generate_syllable()
         automaton.add_body(x, y, radius=radius, mass=mass, u=u, v=v, name=name)
 

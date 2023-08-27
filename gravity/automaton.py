@@ -129,6 +129,7 @@ class GravityAutomatonSparseMatrix:
 
 class GravityAutomatonDataFrame:
     contents: DataFrame
+    total_mass: float = 1
 
     def __init__(self):
         self.contents = DataFrame(columns="x y mass radius u v name".split())
