@@ -6,7 +6,7 @@ from robingame.text import fonts
 from .automaton import Automaton
 from .physics import Body
 from .transform import Transform
-from .utils import overlap
+from .utils import overlap, square_text
 from .viewport_handler import FloatRect
 
 
@@ -48,7 +48,13 @@ class GravityFrontend:
             radius = max(2, radius)
             pygame.draw.circle(surface, color, center=uv, radius=radius)
             if body.name:
-                fonts.cellphone_white.render(surface, body.name, x=uv[0], y=uv[1], scale=2)
+                fonts.cellphone_white.render(
+                    surface,
+                    square_text(body.name),
+                    x=uv[0],
+                    y=uv[1],
+                    scale=2,
+                )
 
     def get_color(self, body: Body, automaton: Automaton) -> Color:
         """

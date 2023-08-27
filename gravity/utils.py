@@ -1,6 +1,9 @@
+import math
+
 from robingame.utils import random_float
 
 from gravity.automaton import Automaton
+from gravity.language import generate_syllable
 
 
 def create_solar_system(automaton: Automaton):
@@ -37,7 +40,7 @@ def spawn_random(automaton: Automaton):
         v = random_float(-3, 3)
         radius = random_float(1, 10)
         mass = radius * 9999999999
-        automaton.add_body(x, y, radius=radius, mass=mass, u=u, v=v)
+        automaton.add_body(x, y, radius=radius, mass=mass, u=u, v=v, name=generate_syllable())
 
 
 def overlap(a: tuple[float, float], b: tuple[float, float]) -> float:
@@ -50,3 +53,19 @@ def overlap(a: tuple[float, float], b: tuple[float, float]) -> float:
     amin, amax = a
     bmin, bmax = b
     return max(0, min(amax, bmax) - max(amin, bmin))
+
+
+def square_text(text: str) -> str:
+    """
+    Format a long string into a square block
+    """
+    return text
+    if len(text) < 10:
+        return text
+    width = math.ceil(math.sqrt(len(text)))
+    wrapped = []
+    ii = 0
+    while ii < len(text):
+        wrapped.append(text[ii : ii + width])
+        ii += width
+    return "\n".join(wrapped)

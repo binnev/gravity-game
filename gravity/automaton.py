@@ -5,6 +5,7 @@ from pandas import DataFrame
 from robingame.utils import SparseMatrix
 
 from . import physics
+from .language import choose_new_name
 from .physics import calculate_x_y_acceleration, calculate_distances
 
 CoordFloat2D = tuple[float, float]
@@ -183,11 +184,14 @@ class GravityAutomatonDataFrame:
             v_j = self.contents.v[j]
             r_i = self.contents.radius[i]
             r_j = self.contents.radius[j]
+            name_i = self.contents.name[i]
+            name_j = self.contents.name[j]
             new_x = (x_i * m_i + x_j * m_j) / (m_i + m_j)
             new_y = (y_i * m_i + y_j * m_j) / (m_i + m_j)
             new_u = (m_i * u_i + m_j * u_j) / (m_i + m_j)
             new_v = (m_i * v_i + m_j * v_j) / (m_i + m_j)
             new_radius = numpy.sqrt(r_i**2 + r_j**2)
+            new_name = choose_new_name(name_i, name_j, m_i, m_j)
             self.contents.drop(i, inplace=True)
             self.contents.drop(j, inplace=True)
             self.add_body(
@@ -197,6 +201,7 @@ class GravityAutomatonDataFrame:
                 radius=new_radius,
                 u=new_u,
                 v=new_v,
+                name=new_name,
             )
             return True
 
