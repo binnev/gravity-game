@@ -2,6 +2,7 @@ from pygame import Rect
 from robingame.objects import Entity, Group
 from robingame.utils import random_float
 
+from . import utils
 from .automaton import GravityAutomatonSparseMatrix, GravityAutomatonDataFrame
 from .backend import Backend
 from .physics import Body
@@ -17,24 +18,17 @@ class GravityScene(Entity):
 
         # automaton = GravityAutomatonSparseMatrix()
         automaton = GravityAutomatonDataFrame()
-        for _ in range(500):
-            x = random_float(-500, 500)
-            y = random_float(-500, 500)
-            u = random_float(-3, 3)
-            v = random_float(-3, 3)
-            radius = random_float(1, 10)
-            mass = radius * 9999999999
-            automaton.add_body(x, y, radius=radius, mass=mass, u=u, v=v)
-
+        utils.create_solar_system(automaton)
+        # utils.spawn_random(automaton)
         backend = Backend(automaton=automaton)
         main_rect = Rect(0, 0, 1000, 1000)
+        size = max(automaton.world_size())
         viewport_handler = DefaultViewportHandler(
             x=0,
             y=0,
-            width=main_rect.width,
-            height=main_rect.height,
+            width=size,
+            height=size,
         )
-        viewport_handler.MAX_WIDTH = viewport_handler.MAX_HEIGHT = 10000
         main_map = Viewer(
             rect=main_rect,
             backend=backend,
