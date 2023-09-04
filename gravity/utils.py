@@ -92,7 +92,7 @@ def overlap(a: tuple[float, float], b: tuple[float, float]) -> float:
     """
     amin, amax = a
     bmin, bmax = b
-    return max(0, min(amax, bmax) - max(amin, bmin))
+    return max(0.0, min(amax, bmax) - max(amin, bmin))
 
 
 def square_text(text: str) -> str:
