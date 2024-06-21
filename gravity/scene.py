@@ -1,10 +1,14 @@
-from pygame import Rect
+import pygame
+from pygame import Rect, Surface
+from robingame.input import EventQueue
 from robingame.objects import Entity, Group
+from robingame.text import fonts
 from robingame.utils import random_float
 
 from . import utils
 from .automaton import GravityAutomatonSparseMatrix, GravityAutomatonDataFrame
 from .backend import Backend
+from .menu import PauseMenu
 from .physics import Body
 from .frontend import GravityFrontend, GravityMinimap
 from .input_handler import KeyboardHandler
@@ -52,3 +56,28 @@ class GravityScene(Entity):
             main_map,
             mini_map,
         )
+
+        self.state = self.state_play
+
+    def draw(self, surface: Surface, debug: bool = False):
+        super().draw(surface, debug)
+        fonts.cellphone_white.render(
+            surface,
+            text="Press space to (un)pause",
+            x=0,
+            y=10,
+            scale=2,
+            wrap=surface.get_width(),
+            align=0,
+        )
+
+    def state_play(self):
+        if EventQueue.filter(type=pygame.KEYDOWN, key=pygame.K_SPACE):
+            self.state = self.state_pause
+            self.menu = PauseMenu()
+            self.children.add(self.menu)
+
+    def state_pause(self):
+        if EventQueue.filter(type=pygame.KEYDOWN, key=pygame.K_SPACE):
+            self.state = self.state_play
+            self.menu.kill()
